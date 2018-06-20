@@ -1,12 +1,12 @@
 # NOTE:RUN this before using this script:
 # export PYTHONPATH=$PYTHONPATH/Users/paulagomezduran/Desktop/THINKSMARTER/Face_Detector/FaceNet
-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+#
+# from __future__ import absolute_import
+# from __future__ import division
+# from __future__ import print_function
 
 from scipy import misc
-import scipy
+# import scipy
 import sys
 import os
 import argparse
@@ -20,9 +20,9 @@ import util
 
 from IPython import embed
 
-import matplotlib
-matplotlib.use("agg")
-import matplotlib.pyplot as plt
+# import matplotlib
+# matplotlib.use("agg")
+# import matplotlib.pyplot as plt
 
 from time import sleep
 from scipy.special import expit
@@ -75,6 +75,7 @@ def full_img_with_boxes(full_img,boxes,filename,output_dir, counter):
         fontColor,
         lineType)
 
+    # cv2.imshow('im',raw_img )
     # cv2.imwrite(os.path.join(output_dir, filename +'_detected.jpg' ),raw_img)
     return raw_img
 
@@ -82,10 +83,12 @@ def create_FaceNet_network_Params(args):
     print('--- Creating FACENET networks and loading parameters ---')
     # os.system('unset PYTHONPATH')
     # os.system('export PYTHONPATH=$PYTHONPATH/Users/paulagomezduran/Desktop/THINKSMARTER/Face_Detector/FaceNet')
+
     with tf.Graph().as_default():
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=args.gpu_memory_fraction)
         sess_config = tf.ConfigProto()
-        sess_config.gpu_options.per_process_gpu_memory_fraction = 0.90
+        sess_config.gpu_options.allow_growth = True
+        # sess_config.gpu_options.per_process_gpu_memory_fraction = 0.90
         with tf.Session(config=sess_config) as sess:
             sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options, log_device_placement=False))
             with sess.as_default():
@@ -112,7 +115,6 @@ def faceNet_Detection(img, output_dir, args, pnet, rnet, onet):
             print('Unable to align "%s"' % image_path)
             # continue
         img = img[:,:,0:3]
-
         bounding_boxes, _ = detect_face.detect_face(img, minsize, pnet, rnet, onet, threshold, factor)
 
         nrof_faces = bounding_boxes.shape[0]
