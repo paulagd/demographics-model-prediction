@@ -1,0 +1,7 @@
+checkpoints/*
+data/*
+Datasets/*
+models/*
+output_cropped_Images/*
+pretrained_models/*
+test_images/*
