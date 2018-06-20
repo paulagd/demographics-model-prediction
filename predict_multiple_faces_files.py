@@ -143,8 +143,8 @@ def main():
                                           "F" if predicted_genders[i][0]>0.5 else "M"))
                 plt.axis('off')
                 plt.subplots_adjust(hspace=0.6)
-                cv2.imwrite(output_directory+'/'+"{}_{}_".format(int(predicted_ages[i]),
-                                    "F" if predicted_genders[i][0] > 0.5 else "M") +"_id"+str(i)+".jpg", scaled_matrix[i])
+                # cv2.imwrite(output_directory+'/'+"{}_{}_".format(int(predicted_ages[i]),
+                #                     "F" if predicted_genders[i][0] > 0.5 else "M") +"_id"+str(i)+".jpg", scaled_matrix[i])
 
             plt.savefig(directory_files[1]+"result_"+str(int(len(scaled_matrix)))+".png")
 
