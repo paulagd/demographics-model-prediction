@@ -79,7 +79,7 @@ def main():
     transfer_learning = args.transfer_learning
     validation_split = args.validation_split
     use_augmentation = args.aug
-    initial_weights = '/home/paula/THINKSMARTER_/Model/age-gender-estimation-adapted/weights.18-4.06.hdf5'
+    initial_weights = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/pretrained_models/weights.18-4.06.hdf5'
     # weight_file = '/home/paula/THINKSMARTER_/Model/age-gender-estimation-adapted/checkpoints/weights.09-4.32.hdf5'
 
     _weight_decay = 0.0005

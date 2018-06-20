@@ -26,7 +26,7 @@ weight_file = "checkpoints/weights.09-4.32.hdf5"  #TRANSFER LEARNING
 
 # test_folder = '/home/paula/THINKSMARTER_/Model/age-gender-estimation-adapted/data/imdb_db.mat'
 # test_folder = '/home/paula/THINKSMARTER_/Model/age-gender-estimation-adapted/data/wiki_db.mat'
-test_folder = '/home/paula/THINKSMARTER_/Model/age-gender-race-adapted/data/test_set_UTK.mat'
+test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/data/test_set_UTK.mat'
 
 
 def transform_image_etnicity_to_predict(im):
