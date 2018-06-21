@@ -17,16 +17,16 @@ from wide_resnet import WideResNet
 from IPython import embed
 
 # NOTE:
-# weight_file = "weights.18-4.06.hdf5"
+weight_file = "pretrained_models/weights.18-4.06.hdf5"
 # weight_file = "checkpoints/weights.02-3.83.hdf5" #FINE TUNING
-weight_file = "checkpoints/weights.09-4.32.hdf5"  #TRANSFER LEARNING
+# weight_file = "checkpoints/weights.09-4.32.hdf5"  #TRANSFER LEARNING
 
 # weights_ethnic_file = "trained_weights/weights_ethnic_v1.hdf5"
 # means_ethnic = 'trained_weights/means_ethnic_v1.npy'
 
-# test_folder = '/home/paula/THINKSMARTER_/Model/age-gender-estimation-adapted/data/imdb_db.mat'
-# test_folder = '/home/paula/THINKSMARTER_/Model/age-gender-estimation-adapted/data/wiki_db.mat'
-test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/data/test_set_UTK.mat'
+# test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/data/imdb_db.mat'
+test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/data/wiki_db.mat'
+# test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/data/test_set_UTK.mat'
 
 
 def transform_image_etnicity_to_predict(im):
@@ -35,7 +35,7 @@ def transform_image_etnicity_to_predict(im):
 	return np.array([im])
 
 
-def main():
+def main(units_age):
 
     img_size = 64
     depth = 16
@@ -46,12 +46,12 @@ def main():
     X_data = image
     y_true_gender = gender
     y_true_age = age
-    model_age_gender = WideResNet(img_size, depth=depth, k=k, units_age=117)()
+    model_age_gender = WideResNet(img_size, depth=depth, k=k, units_age=units_age)()
     model_age_gender.load_weights(weight_file)
 
     result_pred = model_age_gender.predict(X_data)
     y_predict_gender = np.argmax(result_pred[0],axis=1)
-    ages = np.arange(0, 117).reshape(117, 1)
+    ages = np.arange(0, units_age).reshape(units_age, 1)
     y_predict_age = result_pred[1].dot(ages).flatten()
 
     gender_acc = accuracy_score(y_true_gender, y_predict_gender)
@@ -80,4 +80,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(101)
