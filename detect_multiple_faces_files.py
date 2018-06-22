@@ -17,7 +17,7 @@ import extract_faceNet_faces as faceNet
 
 directory_files = ['test_images/','output_cropped_Images/'] #TW  = trained weights
 
-weight_file = "pretraiined_models/weights.18-4.06.hdf5"
+weight_file = "pretrained_models/weights.18-4.06.hdf5"
 # weight_file = "models/weights.09-4.32.hdf5"
 
 # weights_ethnic_file = "trained_weights/weights_ethnic_v1.hdf5"
