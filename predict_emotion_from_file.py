@@ -5,12 +5,11 @@ import argparse
 # import dlib
 import time
 import keras.backend as K
-from utils_em import load_emotion_model
-from utils_em import apply_offsets
-from utils_em import draw_bounding_box
-from utils_em import draw_text
-from utils_em import get_color
-from utils_em import draw_str
+# import sys
+# sys.path.insert(0,'./feelings/')
+
+from feelings.utils import load_emotion_model, apply_offsets, draw_bounding_box, draw_text, get_color, draw_str
+
 from console_progressbar import ProgressBar
 from IPython import embed
 
@@ -35,6 +34,7 @@ if __name__ == '__main__':
     class_names = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
 
     # detector = dlib.get_frontal_face_detector()
+    embed()
     emotion_model = load_emotion_model('models/model.best.hdf5')
 
     try:

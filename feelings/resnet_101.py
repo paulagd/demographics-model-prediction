@@ -8,7 +8,7 @@ from keras import backend as K
 
 from sklearn.metrics import log_loss
 
-from custom_layers.scale_layer import Scale
+from .custom_layers.scale_layer import Scale
 
 import sys
 

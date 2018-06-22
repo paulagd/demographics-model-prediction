@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from resnet_101 import resnet101_model
+from .resnet_101 import resnet101_model
 
 
 def load_emotion_model(model_path):
