@@ -5,3 +5,7 @@ models/*
 output_cropped_Images/*
 pretrained_models/*
 test_images/*
+*.pyc
+feelings/*.pyc
+feelings/__pycache__/*
+__pycache__/*
