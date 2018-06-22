@@ -5,18 +5,16 @@ import argparse
 from contextlib import contextmanager
 import h5py
 import scipy.misc as misc
-from utils import load_data
 from keras.utils import np_utils
+from sklearn.metrics import accuracy_score,mean_squared_error
 
 import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
 
-
-from sklearn.metrics import accuracy_score,mean_squared_error
-
+from age_gender.utils import load_data
 # MODELS
-from wide_resnet import WideResNet
+from age_gender.wide_resnet import WideResNet
 # from face_network import create_face_network
 
 # DETECTORS
@@ -39,8 +37,8 @@ modhash = '89f56a39a78454e96379348bddd78c0d'
 # ETHNIC = {0: 'White', 1: 'Black', 2: "Asian", 3: "Indian", 4: "Others"}
 directory_files = ['test_images/','output_cropped_Images/'] #TW  = trained weights
 
-weight_file = "weights.18-4.06.hdf5"
-# weight_file = "checkpoints/weights.09-4.32.hdf5"
+weight_file = "pretrained_models/weights.18-4.06.hdf5"
+# weight_file = "age_gender/checkpoints/weights.09-4.32.hdf5"
 
 # weights_ethnic_file = "trained_weights/weights_ethnic_v1.hdf5"
 # means_ethnic = 'trained_weights/means_ethnic_v1.npy'
