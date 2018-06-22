@@ -34,7 +34,6 @@ if __name__ == '__main__':
     class_names = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
 
     # detector = dlib.get_frontal_face_detector()
-    embed()
     emotion_model = load_emotion_model('models/model.best.hdf5')
 
     try:
