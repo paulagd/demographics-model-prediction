@@ -11,14 +11,15 @@ from keras.utils import np_utils
 from keras.utils.vis_utils import plot_model
 from keras.models import Model
 from keras.regularizers import l2
-from wide_resnet import WideResNet
-# from wide_resnet_101 import WideResNet_101
-from utils import mk_dir, load_data
 from keras.preprocessing.image import ImageDataGenerator
+# from keras.callbacks import TensorBoard
+
+from wide_resnet import WideResNet
+from utils import mk_dir, load_data
 from mixup_generator import MixupGenerator
 from random_eraser import get_random_eraser
+
 from IPython import embed
-from keras.callbacks import TensorBoard
 
 # from tensorflow.python import keras
 
@@ -123,7 +124,7 @@ def main():
     model.summary()
 
     if args.plot_model:
-        plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
+        plot_model(model, to_file='experiments_pictures/model_plot.png', show_shapes=True, show_layer_names=True)
 
     logging.debug("Saving model...")
     mk_dir("models")
@@ -131,15 +132,14 @@ def main():
         f.write(model.to_json())
 
     mk_dir("checkpoints")
-    tensorBoard = TensorBoard(log_dir='events', histogram_freq=0, batch_size=32, write_graph=True, write_grads=False, write_images=True, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None, embeddings_data=None)
+    # tensorBoard = TensorBoard(log_dir='events', histogram_freq=0, batch_size=32, write_graph=True, write_grads=False, write_images=True, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None, embeddings_data=None)
 
     callbacks = [LearningRateScheduler(schedule=Schedule(nb_epochs)),
                  ModelCheckpoint("checkpoints/weights.{epoch:02d}-{val_loss:.2f}.hdf5",
                                  monitor="val_loss",
                                  verbose=1,
                                  save_best_only=True,
-                                 mode="auto"),
-                  tensorBoard
+                                 mode="auto")
                  ]
 
 

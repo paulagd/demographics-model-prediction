@@ -5,13 +5,12 @@ import argparse
 from contextlib import contextmanager
 import h5py
 import scipy.misc as misc
-from utils import load_data
 from keras.utils import np_utils
-
 from sklearn.metrics import accuracy_score,mean_squared_error, mean_absolute_error
 
+from age_gender.utils import load_data
 # MODELS
-from wide_resnet import WideResNet
+from age_gender.wide_resnet import WideResNet
 # from face_network import create_face_network
 
 from IPython import embed
@@ -26,6 +25,7 @@ weight_file = "pretrained_models/weights.18-4.06.hdf5"
 
 # test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/data/imdb_db.mat'
 test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/data/wiki_db.mat'
+# test_folder = '/Users/paulagomezduran/Desktop/MODELS-SERVER/demographics-model-prediction/data/wiki_db.mat'
 # test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/data/test_set_UTK.mat'
 
 

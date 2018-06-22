@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
         end = time.time()
 
-        cv.imwrite("test_feelings.jpg", im)
+        cv.imwrite("experiments_pictures/test_feelings.jpg", im)
 
 
     except KeyboardInterrupt:

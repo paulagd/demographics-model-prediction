@@ -1,4 +1,3 @@
-checkpoints/*
 data/*
 Datasets/*
 models/*
@@ -9,3 +8,8 @@ test_images/*
 feelings/*.pyc
 feelings/__pycache__/*
 __pycache__/*
+
+
+age_gender/checkpoints/*
+age_gender/models/*
+age_gender/__pycache__/*
