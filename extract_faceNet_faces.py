@@ -164,8 +164,4 @@ def faceNet_Detection(img, output_dir, args, pnet, rnet, onet):
         else:
             print('Unable to align "%s"' % image_path)
 
-<<<<<<< HEAD
     return [scaled_matrix, nrof_successfully_aligned, detected_faces]
-=======
-    return [scaled_matrix, nrof_successfully_aligned, bounding_boxes, detected_faces]
->>>>>>> refs/remotes/origin/master
