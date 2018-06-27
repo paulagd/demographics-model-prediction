@@ -1,6 +1,7 @@
 # NOTE:RUN this before using this script:
 # export PYTHONPATH=$PYTHONPATH/Users/paulagomezduran/Desktop/THINKSMARTER/Face_Detector/FaceNet
-#
+# export PYTHONPATH=$PYTHONPATH/home/paula/THINKSMARTER_/face-detectors/FaceNet
+
 # from __future__ import absolute_import
 # from __future__ import division
 # from __future__ import print_function
@@ -26,7 +27,7 @@ from IPython import embed
 
 from time import sleep
 from scipy.special import expit
-from PIL import Image
+# from PIL import Image
 
 def overlay_bounding_boxes(raw_img, refined_bboxes,lw=3):
   """Overlay bounding boxes of face on images.
@@ -163,4 +164,4 @@ def faceNet_Detection(img, output_dir, args, pnet, rnet, onet):
         else:
             print('Unable to align "%s"' % image_path)
 
-    return [scaled_matrix, nrof_successfully_aligned, detected_faces]
+    return [scaled_matrix, nrof_successfully_aligned, bounding_boxes, detected_faces]
