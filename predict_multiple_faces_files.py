@@ -98,7 +98,11 @@ def main():
                 print ("** Creating output_directory in "+output_directory+' ... **')
                 os.makedirs(output_directory)
             [pnet, rnet, onet] = faceNet.create_FaceNet_network_Params(args)
+<<<<<<< HEAD
             [scaled_matrix , n_faces_detected ,detected_faces_image] = faceNet.faceNet_Detection(img,output_directory, args, pnet, rnet, onet)
+=======
+            [scaled_matrix , n_faces_detected, boxes ,detected_faces_image] = faceNet.faceNet_Detection(img,output_directory, args, pnet, rnet, onet)
+>>>>>>> refs/remotes/origin/master
 
             # Load model and weights of AGE-GENDER
             img_size_age_gender = 64
