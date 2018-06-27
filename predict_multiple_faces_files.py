@@ -98,7 +98,7 @@ def main():
                 print ("** Creating output_directory in "+output_directory+' ... **')
                 os.makedirs(output_directory)
             [pnet, rnet, onet] = faceNet.create_FaceNet_network_Params(args)
-            [scaled_matrix , n_faces_detected, detected_faces_image] = faceNet.faceNet_Detection(img,output_directory, args, pnet, rnet, onet)
+            [scaled_matrix , n_faces_detected, boxes ,detected_faces_image] = faceNet.faceNet_Detection(img,output_directory, args, pnet, rnet, onet)
 
             # Load model and weights of AGE-GENDER
             img_size_age_gender = 64
@@ -144,7 +144,7 @@ def main():
                 # cv2.imwrite(output_directory+'/'+"{}_{}_".format(int(predicted_ages[i]),
                 #                     "F" if predicted_genders[i][0] > 0.5 else "M") +"_id"+str(i)+".jpg", scaled_matrix[i])
 
-            plt.savefig(directory_files[1]+"result_"+str(int(len(scaled_matrix)))+".png")
+            plt.savefig(output_directory+"/result_"+str(int(len(scaled_matrix)))+".png")
 
 
                 # misc.imsave(output_directory_files[1]+"{}_{}_{}".format(int(predicted_ages[i]),
