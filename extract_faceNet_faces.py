@@ -112,8 +112,9 @@ def faceNet_Detection(img, output_dir, args, pnet, rnet, onet):
     output_filename = os.path.join(output_dir, filename+'.png')
 
     if not os.path.exists(output_filename) and img is not None:
+
         if img.ndim<2:
-            print('Unable to align "%s"' % image_path)
+            print('Unable to align "%s"' % output_filename)
             # continue
         img = img[:,:,0:3]
         bounding_boxes, _ = detect_face.detect_face(img, minsize, pnet, rnet, onet, threshold, factor)
@@ -162,6 +163,6 @@ def faceNet_Detection(img, output_dir, args, pnet, rnet, onet):
             nrof_successfully_aligned=0
 
         else:
-            print('Unable to align "%s"' % image_path)
+            print('Unable to align "%s"' % output_filename)
 
     return [scaled_matrix, nrof_successfully_aligned, detected_faces]

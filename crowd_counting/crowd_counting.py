@@ -9,7 +9,6 @@ import keras
 import tensorflow as tf
 import timeit
 
-
 class CrowdCounting():
 
     def __init__(self):
@@ -33,7 +32,7 @@ class CrowdCounting():
 
         # add corresponding weights for crowd_counting model
         net_crowd = Model(input=input_a, output=[dense5])
-        net_crowd.load_weights("../models/counting_weights.hdf5")
+        net_crowd.load_weights("./models/counting_weights.hdf5")
 
         self.filename = 0
 

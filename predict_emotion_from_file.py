@@ -95,7 +95,7 @@ if __name__ == '__main__':
             plt.axis('off')
             plt.subplots_adjust(hspace=0.6)
 
-        plt.savefig("experiments_pictures/emotions_picture.png")
+        plt.savefig("output_feelings/emotions_picture.png")
 
 
         # color = get_color(emotion, prob)
