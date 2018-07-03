@@ -4,7 +4,8 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
-import tiny_face_model
+# import tiny_face_model
+from .tiny_face_model import TinyModel
 import util
 from argparse import ArgumentParser
 import cv2
@@ -79,7 +80,8 @@ def evaluate(weight_file_path, data_dir, output_dir, prob_thresh=0.5, nms_thresh
   x = tf.placeholder(tf.float32, [1, None, None, 3]) # n, h, w, c
 
   # Create the tiny face model which weights are loaded from a pretrained model.
-  model = tiny_face_model.Model(weight_file_path)
+  # model = tiny_face_model.Model(weight_file_path)
+  model = TinyModel(weight_file_path)
   score_final = model.tiny_face(x)
 
   # TODO:

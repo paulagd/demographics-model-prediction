@@ -7,7 +7,7 @@ import tensorflow as tf
 import numpy as np
 import pickle
 
-class Model():
+class TinyModel():
     def __init__(self, weight_file_path):
       """Overlay bounding boxes of face on images.
         Args:

@@ -6,17 +6,13 @@ import tensorflow as tf
 import util
 import time
 import sys
-# from contextlib import contextmanager
-# from wide_resnet import WideResNet
-# from face_network import create_face_network
-# import detect_face
 import scipy.misc as misc
 from scipy.special import expit
 
 from IPython import embed
 
-import extract_faceNet_faces as faceNet
-import extract_tinyfaces_faces as tinyFaces
+import face_extractors.extract_faceNet_faces as faceNet
+import face_extractors.extract_tinyfaces_faces as tinyFaces
 
 
 # pretrained_model = "https://github.com/yu4u/age-gender-estimation/releases/download/v0.5/weights.18-4.06.hdf5"
@@ -27,16 +23,16 @@ modhash = '89f56a39a78454e96379348bddd78c0d'
 # directory_files = ['test_images/','output_cropped_Images/']
 # weight_file = "weights.18-4.06.hdf5"
 
-
 # NOTE: weights of training the model with an ethnicity dataset
-ETHNIC = {0: 'White', 1: 'Black', 2: "Asian", 3: "Indian", 4: "Others"}
+# ETHNIC = {0: 'White', 1: 'Black', 2: "Asian", 3: "Indian", 4: "Others"}
 
 # MODEL PARAMS
-weight_file = "weights.18-4.06.hdf5"
+# weight_file = "weights.18-4.06.hdf5"
 
 # VIDEO allocation
-video_directory = '/home/paula/THINKSMARTER_/10km_de_course.wmv.mp4'
-output_directory = 'output_video_frames/'
+# video_directory = '/home/paula/THINKSMARTER_/10km_de_course.wmv.mp4'
+video_directory = '/Users/paulagomezduran/Desktop/10km_de_course.wmv.mp4'
+output_directory = 'results/output_video_frames/'
 
 # weight_file_path / data_dir / output_dir / line_width / display
 tinyFaces_args = ['weights.pkl','test_images/','predicted_images/', 3, False]
@@ -110,10 +106,6 @@ def main():
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    if not os.path.exists('out_video'):
-        os.makedirs('out_video')
-
-
     if args.face_detector == 'facenet':
         out1 = cv2.VideoWriter(output_directory+'output_facenet.avi',fourcc, 20.0, size)
     elif args.face_detector == 'tinyfaces':
@@ -163,10 +155,8 @@ def main():
         print("Total time: ", time.time() - start)
         # Release everything if job is finished
         capture.release()
-        out1.release()
-        out2.release()
-        # out_fn.release()
-        # out_tf.release()
+        # out1.release()
+        # out2.release()
         cv2.destroyAllWindows()
 
     except KeyboardInterrupt:

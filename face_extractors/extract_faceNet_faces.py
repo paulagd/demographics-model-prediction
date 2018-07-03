@@ -1,6 +1,7 @@
 # NOTE:RUN this before using this script:
-# export PYTHONPATH=$PYTHONPATH/Users/paulagomezduran/Desktop/THINKSMARTER/Face_Detector/FaceNet
 # export PYTHONPATH=$PYTHONPATH/home/paula/THINKSMARTER_/face-detectors/FaceNet
+# export PYTHONPATH=$PYTHONPATH/Users/paulagomezduran/Desktop/MODELS-SERVER/face-detectors/FaceNet
+
 
 # from __future__ import absolute_import
 # from __future__ import division
