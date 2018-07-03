@@ -18,4 +18,6 @@ age_gender/models/*
 age_gender/__pycache__/*
 
 output_cropped_Images/*
+output_video_frames/*
 *.pyc
+*.pkl

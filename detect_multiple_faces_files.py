@@ -11,19 +11,15 @@ from IPython import embed
 # DETECTORS
 # export PYTHONPATH=$PYTHONPATH/home/paula/THINKSMARTER_/Face_Detector/FaceNet
 import extract_faceNet_faces as faceNet
+import extract_tinyfaces_faces as tinyFaces
 
 # pretrained_model = "https://github.com/yu4u/age-gender-estimation/releases/download/v0.5/weights.18-4.06.hdf5"
 # modhash = '89f56a39a78454e96379348bddd78c0d'
 
 directory_files = ['test_images/','output_cropped_Images/'] #TW  = trained weights
+tinyFaces_args = ['weights.pkl','test_images/','predicted_images/', 3, False]
 
 weight_file = "pretrained_models/weights.18-4.06.hdf5"
-# weight_file = "models/weights.09-4.32.hdf5"
-
-# weights_ethnic_file = "trained_weights/weights_ethnic_v1.hdf5"
-# means_ethnic = 'trained_weights/means_ethnic_v1.npy'
-
-
 
 def get_args():
     parser = argparse.ArgumentParser(description="This script detects faces from web cam input, "
@@ -35,6 +31,8 @@ def get_args():
     #                     help="depth of network")
     # parser.add_argument("--width", type=int, default=8,
     #                     help="width of network")
+    
+    parser.add_argument("--face_detector", type=str, required=True)
 
     # IDEA: ADD facenet args
     parser.add_argument('--image_size', type=int,
@@ -49,6 +47,15 @@ def get_args():
         help='Upper bound on the amount of GPU memory that will be used by the process.', default=1.0)
     parser.add_argument('--detect_multiple_faces', type=bool,
                         help='Detect and align multiple faces per image.', default=True)
+
+    # IDEA: ADD tinyfaces args
+    parser.add_argument('--prob_thresh', type=float, help='The threshold of detection confidence(default: 0.5).', default=0.5)
+    parser.add_argument('--nms_thresh', type=float, help='The overlap threshold of non maximum suppression(default: 0.1).', default=0.1)
+    parser.add_argument('--weight_file_path', type=str, help='Pretrained weight file.', default=tinyFaces_args[0])
+    parser.add_argument('--data_dir', type=str, help='Image data directory.', default=tinyFaces_args[1])
+    parser.add_argument('--output_dir', type=str, help='Output directory for images with faces detected.', default=tinyFaces_args[2])
+    parser.add_argument('--line_width', type=int, help='Line width of bounding boxes(0: auto).', default=tinyFaces_args[3])
+    parser.add_argument('--display', type=bool, help='Display each image on window.', default=tinyFaces_args[4])
 
     args = parser.parse_args()
     return args
