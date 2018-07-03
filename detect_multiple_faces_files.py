@@ -16,8 +16,8 @@ import extract_tinyfaces_faces as tinyFaces
 # pretrained_model = "https://github.com/yu4u/age-gender-estimation/releases/download/v0.5/weights.18-4.06.hdf5"
 # modhash = '89f56a39a78454e96379348bddd78c0d'
 
-directory_files = ['test_images/','output_cropped_Images/'] #TW  = trained weights
-tinyFaces_args = ['weights.pkl','test_images/','predicted_images/', 3, False]
+directory_files = ['test_images/','results/output_detected_faces/'] #TW  = trained weights
+tinyFaces_args = ['weights.pkl','test_images/','results/predicted_images/', 3, False]
 
 weight_file = "pretrained_models/weights.18-4.06.hdf5"
 
@@ -31,7 +31,7 @@ def get_args():
     #                     help="depth of network")
     # parser.add_argument("--width", type=int, default=8,
     #                     help="width of network")
-    
+
     parser.add_argument("--face_detector", type=str, required=True)
 
     # IDEA: ADD facenet args

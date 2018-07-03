@@ -10,7 +10,7 @@ from IPython import embed
 
 from crowd_counting.crowd_counting import CrowdCounting
 
-directory_files = ['test_images/','output_cropped_Images/'] #TW  = trained weights
+directory_files = ['test_images/','results/output_crowd_images/'] #TW  = trained weights
 
 
 

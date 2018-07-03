@@ -50,7 +50,7 @@ if __name__ == '__main__':
     args = get_args()
 
     im_path = 'test_images/crowd-of-people-walking.png'
-    output_directory = 'output_feelings'
+    output_directory = 'results/output_feelings'
     img_width, img_height = 224, 224
     num_channels = 3
     num_classes = 7
@@ -95,7 +95,7 @@ if __name__ == '__main__':
             plt.axis('off')
             plt.subplots_adjust(hspace=0.6)
 
-        plt.savefig("output_feelings/emotions_picture.png")
+        plt.savefig("results/output_feelings/emotions_picture.png")
 
 
         # color = get_color(emotion, prob)

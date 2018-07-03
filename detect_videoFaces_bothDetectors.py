@@ -35,7 +35,7 @@ video_directory = '/Users/paulagomezduran/Desktop/10km_de_course.wmv.mp4'
 output_directory = 'results/output_video_frames/'
 
 # weight_file_path / data_dir / output_dir / line_width / display
-tinyFaces_args = ['weights.pkl','test_images/','predicted_images/', 3, False]
+tinyFaces_args = ['weights.pkl','test_images/','results/predicted_images/', 3, False]
 
 
 def get_args():

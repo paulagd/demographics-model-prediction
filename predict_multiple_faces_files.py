@@ -35,7 +35,7 @@ modhash = '89f56a39a78454e96379348bddd78c0d'
 
 # NOTE: weights of training the model with an ethnicity dataset
 # ETHNIC = {0: 'White', 1: 'Black', 2: "Asian", 3: "Indian", 4: "Others"}
-directory_files = ['test_images/age-gender-preds/','output_cropped_Images/'] #TW  = trained weights
+directory_files = ['test_images/age-gender-preds/','results/output_predicted_faces/'] #TW  = trained weights
 
 weight_file = "pretrained_models/weights.18-4.06.hdf5"
 # weight_file = "age_gender/checkpoints/weights.09-4.32.hdf5"
