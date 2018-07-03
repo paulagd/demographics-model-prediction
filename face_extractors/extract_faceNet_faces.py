@@ -115,7 +115,7 @@ def faceNet_Detection(img, output_dir, args, pnet, rnet, onet):
     if not os.path.exists(output_filename) and img is not None:
 
         if img.ndim<2:
-            print('Unable to align "%s"' % output_filename)
+            print('Unable to align "%s" FOR THE DIMENSION' % output_filename)
             # continue
         img = img[:,:,0:3]
         bounding_boxes, _ = detect_face.detect_face(img, minsize, pnet, rnet, onet, threshold, factor)
@@ -150,14 +150,13 @@ def faceNet_Detection(img, output_dir, args, pnet, rnet, onet):
                 cropped = img[bb[1]:bb[3],bb[0]:bb[2],:]
                 scaled = misc.imresize(cropped, (args.image_size, args.image_size), interp='bilinear')
                 nrof_successfully_aligned += 1
-                filename_base, file_extension = os.path.splitext(output_filename)
-                if args.detect_multiple_faces:
-                    output_filename_n = "{}_{}{}".format(filename_base, i, file_extension)
-                else:
-                    output_filename_n = "{}{}".format(filename_base, file_extension)
+                # filename_base, file_extension = os.path.splitext(output_filename)
+                # if args.detect_multiple_faces:
+                #     output_filename_n = "{}_{}{}".format(filename_base, i, file_extension)
+                # else:
+                #     output_filename_n = "{}{}".format(filename_base, file_extension)
+
                 scaled_matrix[i] = scaled
-                # cv2.imwrite(output_filename_n,scaled)
-                # text_file.write('%s %d %d %d %d\n' % (output_filename_n, bb[0], bb[1], bb[2], bb[3]))
 
             detected_faces = full_img_with_boxes(img,bounding_boxes,filename,output_dir, nrof_successfully_aligned)
             print ('Number of croped images on the frame : %d' % ( nrof_successfully_aligned))

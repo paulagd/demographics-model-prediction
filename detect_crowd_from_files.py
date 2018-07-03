@@ -10,7 +10,7 @@ from IPython import embed
 
 from crowd_counting.crowd_counting import CrowdCounting
 
-directory_files = ['test_images/','results/output_crowd_images/'] #TW  = trained weights
+directory_files = ['test_images/age-gender-preds','results/output_crowd_images/'] #TW  = trained weights
 
 
 
@@ -42,6 +42,8 @@ def main():
             number_person = cc.run(img)
             print ('The estimated number of people is ')
             print(number_person[0])
+            embed()
+            # IDEA: cv2.imwrite(output_directory+files,detected_faces_image)
 
 
 if __name__ == '__main__':

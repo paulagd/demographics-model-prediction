@@ -10,13 +10,13 @@ from IPython import embed
 
 # DETECTORS
 # export PYTHONPATH=$PYTHONPATH/home/paula/THINKSMARTER_/Face_Detector/FaceNet
-import extract_faceNet_faces as faceNet
-import extract_tinyfaces_faces as tinyFaces
+import face_extractors.extract_faceNet_faces as faceNet
+import face_extractors.extract_tinyfaces_faces as tinyFaces
 
 # pretrained_model = "https://github.com/yu4u/age-gender-estimation/releases/download/v0.5/weights.18-4.06.hdf5"
 # modhash = '89f56a39a78454e96379348bddd78c0d'
 
-directory_files = ['test_images/','results/output_detected_faces/'] #TW  = trained weights
+directory_files = ['test_images/age-gender-preds','results/output_detected_faces/'] #TW  = trained weights
 tinyFaces_args = ['weights.pkl','test_images/','results/predicted_images/', 3, False]
 
 weight_file = "pretrained_models/weights.18-4.06.hdf5"
@@ -70,28 +70,63 @@ def transform_image_etnicity_to_predict(im):
 def main():
 
     args = get_args()
-    # depth = args.depth
-    # k = args.width
-    # max_age = args.max_age + 1
-    #
-    # scaled_matrix = np.empty([])
-    #
     [pnet, rnet, onet] = faceNet.create_FaceNet_network_Params(args)
+    detected_faces = []
+
+    # for files in os.listdir(directory_files[0]):
+    #     if files.endswith('.jpg') or files.endswith('.png'):
+    #         print ('-------Analysing image:  '+files+'-------')
+    #         img = cv2.imread(os.getcwd()+'/'+directory_files[0]+files)
+    #         # for face detection
+    #         output_directory = directory_files[1]
+    #         if not os.path.exists(output_directory):
+    #             print ("** Creating output_directory in "+output_directory+' ... **')
+    #             os.makedirs(output_directory)
+    #
+    #
+    #         [scaled_matrix , n_faces_detected, detected_faces_image] = faceNet.faceNet_Detection(img,output_directory, args, pnet, rnet, onet)
+    #         cv2.imwrite(output_directory+files,detected_faces_image)
+    #
+    #         detected_faces.append(detected_faces_image)
+    #
+    # np.array(detected_faces).dump(open('detected_faces_array.npy', 'wb'))
+
 
     for files in os.listdir(directory_files[0]):
         if files.endswith('.jpg') or files.endswith('.png'):
             print ('-------Analysing image:  '+files+'-------')
-            img = cv2.imread(os.getcwd()+'/'+directory_files[0]+files)
+            img = cv2.imread(os.getcwd()+'/'+directory_files[0]+'/'+files)
             # for face detection
             output_directory = directory_files[1]
             if not os.path.exists(output_directory):
                 print ("** Creating output_directory in "+output_directory+' ... **')
                 os.makedirs(output_directory)
 
+            if args.face_detector == 'facenet':
+                # out_fn = cv2.VideoWriter('output_facenet.avi',fourcc, 20.0, size)
+                [scaled_matrix , n_faces_detected, detected_faces_image] = faceNet.faceNet_Detection(img,output_directory, args, pnet, rnet, onet)
+                # print ('scaled_matrix.shape',scaled_matrix.shape)
 
-            [scaled_matrix , n_faces_detected, detected_faces_image] = faceNet.faceNet_Detection(img,output_directory, args, pnet, rnet, onet)
+                if detected_faces_image.ndim == 1:
+                    print("--> SOMETHING IS WRONG IN THIS IMAGE")
+                else:
+                    cv2.imwrite(output_directory+files,detected_faces_image)
+                    detected_faces.append(scaled_matrix)
 
-            print (n_faces_detected)
+            elif args.face_detector == 'tinyfaces':
+                # out_tf = cv2.VideoWriter('output_tinyfaces.avi',fourcc, 20.0, size)
+                [scaled_matrix , n_faces_detected, detected_faces_image] = tinyFaces.tinyFaces_Detection(args,img)
+                # TODO: develop a scaled_matrix
+
+                cv2.imwrite(output_directory+files,detected_faces_image)
+                detected_faces.append(scaled_matrix)
+            else:
+                print ('A face detector is required as an argument. The options are: facenet or tinyfaces.')
+
+
+    np.array(detected_faces).dump(open('detected_faces_'+str(args.face_detector)+'_array.npy', 'wb'))
+
+
             #
             # cols = 5
             # rows = int(len(scaled_matrix)/cols) + 1

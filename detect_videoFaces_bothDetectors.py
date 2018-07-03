@@ -30,8 +30,8 @@ modhash = '89f56a39a78454e96379348bddd78c0d'
 # weight_file = "weights.18-4.06.hdf5"
 
 # VIDEO allocation
-# video_directory = '/home/paula/THINKSMARTER_/10km_de_course.wmv.mp4'
-video_directory = '/Users/paulagomezduran/Desktop/10km_de_course.wmv.mp4'
+video_directory = '/home/paula/THINKSMARTER_/10km_de_course.wmv.mp4'
+# video_directory = '/Users/paulagomezduran/Desktop/10km_de_course.wmv.mp4'
 output_directory = 'results/output_video_frames/'
 
 # weight_file_path / data_dir / output_dir / line_width / display
