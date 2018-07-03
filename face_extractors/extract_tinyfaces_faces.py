@@ -56,14 +56,19 @@ def overlay_bounding_boxes(raw_img, refined_bboxes, lw=3):
     cv2.rectangle(raw_img, (_r[0], _r[1]), (_r[2], _r[3]), rect_color, _lw)
 
 def full_img_with_boxes(full_img,boxes,output_dir, counter):
+
     raw_img = full_img.copy()
     overlay_bounding_boxes(raw_img,boxes)
 
     font                   = cv2.FONT_HERSHEY_SIMPLEX
-    bottomLeftCornerOfText = (1100,700)
+    bottomLeftCornerOfText = (full_img.shape[1]-200,full_img.shape[0]-50)
     fontScale              = 1
-    fontColor              = (255,255,255)
     lineType               = 4
+
+    if np.mean(full_img[full_img.shape[0]-50,full_img.shape[1]-200,:]) > 180:
+        fontColor = (0,0,0)
+    else:
+        fontColor = (255,255,255)
 
     cv2.putText(raw_img, "Counter:"+ str(counter),
         bottomLeftCornerOfText,

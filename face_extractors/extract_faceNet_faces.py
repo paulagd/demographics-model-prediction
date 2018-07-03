@@ -65,7 +65,7 @@ def full_img_with_boxes(full_img,boxes,filename,output_dir, counter):
     overlay_bounding_boxes(raw_img,boxes)
 
     font                   = cv2.FONT_HERSHEY_SIMPLEX
-    bottomLeftCornerOfText = (1100,700)
+    bottomLeftCornerOfText = (full_img.shape[1]-200,full_img.shape[0]-50)
     fontScale              = 1
     fontColor              = (255,255,255)
     lineType               = 4
