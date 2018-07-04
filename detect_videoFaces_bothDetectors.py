@@ -123,10 +123,10 @@ def main():
                 [scaled_matrix , n_faces_detected, detected_faces_image] = faceNet.faceNet_Detection(frame,output_directory, args, pnet, rnet, onet)
                 # print ('scaled_matrix.shape',scaled_matrix.shape)
 
-                if detected_faces_image.ndim == 1:
-                    print("------SOMETHING IS WRONG------")
-                    sys.exit(0)
-                else:
+                # if detected_faces_image.ndim == 1:
+                #     print("------SOMETHING IS WRONG------")
+                #     sys.exit(0)
+                # else:
                     # IDEA: LOAD MODELS -- SLOW
                     # NOTE[faces, faces1] = loadModels(scaled_matrix, depth, k)
                     # FACES  SHAPEEEE.------ (11, 64, 64, 3)
@@ -136,18 +136,18 @@ def main():
                     # name = "out_video/frame_"+str(count)+".jpg"
                     # print (name)
                     # cv2.imwrite(name,detected_faces_image)
-                    out1.write(detected_faces_image)
-                    count +=1
+                out1.write(detected_faces_image)
+                count +=1
 
             elif args.face_detector == 'tinyfaces':
                 # out_tf = cv2.VideoWriter('output_tinyfaces.avi',fourcc, 20.0, size)
-                detected_faces_image = tinyFaces.tinyFaces_Detection(args,frame)
+                [scaled_matrix , n_faces_detected, detected_faces_image] = tinyFaces.tinyFaces_Detection(args,frame)
                 # TODO: develop a scaled_matrix
 
-                if detected_faces_image.ndim == 1:
-                    print("------SOMETHING IS WRONG------")
-                else:
-                    out2.write(detected_faces_image)
+                # if detected_faces_image.ndim == 1:
+                #     print("------SOMETHING IS WRONG------")
+                # else:
+                out2.write(detected_faces_image)
             else:
                 print ('A face detector is required as an argument. The options are: facenet or tinyfaces.')
 

@@ -20,6 +20,7 @@ age_gender/__pycache__/*
 face_extractors/__pycache__/*
 face_extractors/*.pyc
 
+results/*
 results/output_detected_faces/*
 results/output_video_frames/*
 *.pyc
