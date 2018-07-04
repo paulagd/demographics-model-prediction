@@ -267,7 +267,7 @@ def evaluate(weight_file_path, data_dir, output_dir, prob_thresh=0.5, nms_thresh
     # IDEA:detected_faces = cv2.cvtColor(raw_img, cv2.COLOR_RGB2BGR)
     # cv2.imwrite(os.path.join(output_dir, fname), raw_img)
 
-    return [scaled_matrix,facecount,detected_faces]
+    return [scaled_matrix,refined_bboxes,detected_faces]
 
 
 def tinyFaces_Detection(args, frame):
