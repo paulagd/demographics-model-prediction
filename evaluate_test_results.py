@@ -29,54 +29,102 @@ test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/dat
 # test_folder = '/home/paula/THINKSMARTER_/Model/demographics-model-prediction/data/test_set_UTK.mat'
 
 
-def transform_image_etnicity_to_predict(im):
-	means = np.load(means_ethnic)
-	im = im - means
-	return np.array([im])
-
-
 def main(units_age):
 
-    img_size = 64
-    depth = 16
-    k = 8
+	img_size = 64
+	depth = 16
+	k = 8
 
 
-    image, gender, age, _, image_size, _ = load_data(test_folder)
-    X_data = image
-    y_true_gender = gender
-    y_true_age = age
-    model_age_gender = WideResNet(img_size, depth=depth, k=k, units_age=units_age)()
-    model_age_gender.load_weights(weight_file)
+	image, gender, age, _, image_size, _ = load_data(test_folder)
+	X_data = image
+	y_true_gender = gender
+	y_true_age = age
 
-    result_pred = model_age_gender.predict(X_data)
-    y_predict_gender = np.argmax(result_pred[0],axis=1)
-    ages = np.arange(0, units_age).reshape(units_age, 1)
-    y_predict_age = result_pred[1].dot(ages).flatten()
+	ranges = [0,10,20,30,40,50,60,70,80,90,100,120]
 
-    gender_acc = accuracy_score(y_true_gender, y_predict_gender)
+	# y_true_age = age[:40]
 
-    age_mSE = mean_squared_error(y_true_age, y_predict_age)
-    age_mAE = mean_absolute_error(y_true_age, y_predict_age)
+	model_age_gender = WideResNet(img_size, depth=depth, k=k, units_age=units_age)()
+	model_age_gender.load_weights(weight_file)
 
-    print ('--------------------------------------------------- ')
-    print ('GENDER ACC: ')
-    print (gender_acc)
-    print ('AGE mSE: ')
-    print (age_mSE)
-    print ('AGE age_mAE: ')
-    print (age_mAE)
+	index = np.arange(len(y_true_age))
+
+	rank_index = []
+	rank_age = []
+
+	for i in range(len(ranges)-1):
+		begining_r = ranges[i]
+		end_r = ranges[i+1]-1
+
+		x = y_true_age > begining_r
+		y = y_true_age < end_r
+
+		condition = x & y
+
+
+		if True in condition:
+			rank_index.append(index[condition])
+			rank_age.append(y_true_age[index[condition]])
+		else:
+			print("no")
+			rank_index.append([])
+			rank_age.append([])
+
+
+	# GENDER
+	result_pred = model_age_gender.predict(X_data)
+	y_predict_gender = np.argmax(result_pred[0],axis=1)
+	gender_acc = accuracy_score(y_true_gender, y_predict_gender)
+
+	# for i in range(len(rank_index))
+	count = 0
+	for rank in rank_index:
+		result_pred = model_age_gender.predict(X_data[rank])
+		ages = np.arange(0, units_age).reshape(units_age, 1)
+		if result_pred:
+			y_predict_age = result_pred[1].dot(ages).flatten()
+			age_mSE = mean_squared_error(y_true_age[rank], y_predict_age)
+			age_mAE = mean_absolute_error(y_true_age[rank], y_predict_age)
+		else:
+			age_mSE = []
+			age_mAE = []
+
+		begining_r = ranges[count]
+		end_r = ranges[count+1]-1
+		print ('--------------------------------------------------- ')
+		print ('GENDER ACC: ')
+		print (gender_acc)
+		# print ('AGE mSE of rank '+str(begining_r)+'-'+str(end_r)+': ')
+		# print (age_mSE)
+		print ('AGE mean Absolute Error of rank '+str(begining_r)+'-'+str(end_r)+': ')
+		print (age_mAE)
+
+		count +=1
+
 	#
-	# cols, rows = 2, 1
-    # img_num = cols * rows
+    # result_pred = model_age_gender.predict(X_data)
+    # y_predict_gender = np.argmax(result_pred[0],axis=1)
+    # ages = np.arange(0, units_age).reshape(units_age, 1)
+    # y_predict_age = result_pred[1].dot(ages).flatten()
 	#
-    # for i in range(img_num):
-    #     plt.subplot(rows, cols, i + 1)
-    #     plt.imshow(cv2.cvtColor(imgs[i], cv2.COLOR_BGR2RGB))
-    #     plt.title("{}, {}".format(int(predicted_ages[i]),
-    #                               "F" if predicted_genders[i][0]>0.5 else "M"))
-    #     plt.axis('off')
-    # plt.savefig("result.png")
+    # gender_acc = accuracy_score(y_true_gender, y_predict_gender)
+	#
+    # age_mSE = mean_squared_error(y_true_age, y_predict_age)
+	#
+	#
+	#
+	# # age_mSE_[i] = mean_squared_error(y_true_age[i], y_predict_age[i])
+	#
+    # age_mAE = mean_absolute_error(y_true_age, y_predict_age)
+
+	# print ('--------------------------------------------------- ')
+	# print ('GENDER ACC: ')
+	# print (gender_acc)
+	# print ('AGE mSE: ')
+	# print (age_mSE)
+	# print ('AGE age_mAE: ')
+	# print (age_mAE)
 
 
 if __name__ == '__main__':

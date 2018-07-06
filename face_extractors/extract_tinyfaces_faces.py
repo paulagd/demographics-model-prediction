@@ -6,7 +6,7 @@ from __future__ import print_function
 import tensorflow as tf
 # import tiny_face_model
 from .tiny_face_model import TinyModel
-import util
+from .util import cm_data
 from argparse import ArgumentParser
 import cv2
 import scipy.io
@@ -45,7 +45,7 @@ def overlay_bounding_boxes(raw_img, refined_bboxes, lw=3):
   for r in refined_bboxes:
     _score = expit(r[4])
     cm_idx = int(np.ceil(_score * 255))
-    rect_color = [int(np.ceil(x * 255)) for x in util.cm_data[cm_idx]]  # parula
+    rect_color = [int(np.ceil(x * 255)) for x in cm_data[cm_idx]]  # parula
     _lw = lw
     if lw == 0:  # line width of each bounding box is adaptively determined.
       bw, bh = r[2] - r[0] + 1, r[3] - r[0] + 1
