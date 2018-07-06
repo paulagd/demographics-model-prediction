@@ -13,7 +13,7 @@ import face_extractors.extract_tinyfaces_faces as tinyFaces
 
 # MODELS
 from age_gender.wide_resnet import WideResNet
-from feelings.utils import load_emotion_model, apply_offsets, draw_bounding_box, draw_text, get_color, draw_str
+from feelings.utils import load_emotion_model
 
 
 from IPython import embed
@@ -155,43 +155,67 @@ def preProcess_Image(scaled_matrix):
 
     return scaled_matrix
 
-def predict_demographics_Image(scaled_matrix,img_size_emotions, class_names):
+def predict_demographics_Image(scaled_matrix):
 
-    img_width, img_height = 224, 224
-    num_channels = 3
-    num_classes = 7
+    # FEELINGS
+    class_names = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
+    img_size_emotions = 224
 
-    # NOTE: LOAD WEIGHTS
+    # # ETHNICITY
+    # img_size_ethnicity = 224
+
+    # AGE-GENDER
+    weight_file_age_gender = "pretrained_models/weights.18-4.06.hdf5"
+    img_size_age_gender = 64
+    depth = 16      # depth of network
+    k = 8           # width of network
+    max_age = 101   # It can be 117 for the other dataset and weights
+
+
+    # NOTE: LOAD MODELS AND WEIGHTS
     emotion_model = load_emotion_model('models/model.best.hdf5')
+    model_age_gender = WideResNet(img_size_age_gender, depth=depth, k=k, units_age=max_age)()
+    model_age_gender.load_weights(weight_file_age_gender)
 
     # NOTE: Resize the images for each model
-    faces = np.empty((len(scaled_matrix), img_size_emotions, img_size_emotions, 3))
+    faces_e = np.empty((len(scaled_matrix), img_size_emotions, img_size_emotions, 3))
+    faces_a_g = np.empty((len(scaled_matrix), img_size_age_gender, img_size_age_gender, 3))
+    # faces_eth = np.empty((len(scaled_matrix), img_size_ethnicity, img_size_ethnicity, 3))
+
 
     for i in range(len(scaled_matrix)):
-        faces[i, :, :, :] = cv2.resize(scaled_matrix[i], (img_size_emotions, img_size_emotions))
+        faces_e[i, :, :, :] = cv2.resize(scaled_matrix[i], (img_size_emotions, img_size_emotions))
+        faces_a_g[i, :, :, :] = cv2.resize(scaled_matrix[i], (img_size_age_gender, img_size_age_gender))
+        # faces_eth[i, :, :, :] = cv2.resize(scaled_matrix[i], (img_size_ethnicity, img_size_ethnicity))
 
     # NOTE: Do the predictions
-    preds = emotion_model.predict(faces)
+    pred_emotions = emotion_model.predict(faces_e)
 
+    result_age_gend = model_age_gender.predict(faces_a_g)
+    predicted_genders = result_age_gend[0]
+    ages = np.arange(0, max_age).reshape(max_age, 1)
+    predicted_ages = result_age_gend[1].dot(ages).flatten()
 
     # NOTE: Build dataframe with info
     rows = []
     index = []
 
     for i in range(len(scaled_matrix)):
-        class_id = np.argmax(preds[i])
+
+        demographic_pred = "{}, {}".format(int(predicted_ages[i]),
+                                  "F" if predicted_genders[i][0]>0.5 else "M")
+
+        class_id = np.argmax(pred_emotions[i])
         emotion = class_names[class_id]
 
-        # rows.append({'emotions': str(emotion) , 'demographics': bboxes[i]})
-        rows.append({'emotions': str(emotion)})
+        rows.append({'emotions': str(emotion) , 'demographics': demographic_pred })
+        # rows.append({'emotions': str(emotion)})
         index.append(i)
 
     info_frame = DataFrame(rows, index=index)
 
-
-    # return [scaled_matrix, info_frame.demographics, info_frame.emotion]
-    return ["20, F", info_frame.emotions]
-
+    return [info_frame.demographics, info_frame.emotions]
+    # return ["20, F", info_frame.emotions]
 
 def main():
 
@@ -200,13 +224,6 @@ def main():
     output_directory = 'results/scripts/'
     tinyFaces_args = ['weights.pkl',output_directory, 3, False]
 
-    # FEELINGS
-    class_names = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
-    img_size_emotions = 224
-
-    # ETHNICITY
-
-    # AGE-GENDER
 
     if not os.path.exists(output_directory):
         print ("** Creating output_directory in "+output_directory+' ... **')
@@ -233,18 +250,16 @@ def main():
 
         data_frame = result[0]
         img = result[1]
-
-        embed()
         # CHECK SCALED MATRRIX
 
-        [demographics, emotions] = predict_demographics_Image(data_frame.imgs,img_size_emotions, class_names)
+        [demographics, emotions] = predict_demographics_Image(data_frame.imgs)
 
         # data_frame.imgs = scaled_matrix
 
         info['counter'] = len(data_frame)
         info['text'] = emotions.values[0]
         # info['demographics'] = emotions.values --> TO SEE EMOTIONS WRITTEN IN BOXES
-        info['demographics'] = emotions.values
+        info['demographics'] = demographics.values
         imageen = write_info_to_img_bboxes(img, data_frame.bboxes.values, info)
         cv2.imwrite(output_directory+'EXAMPLE_'+str(i)+'.jpg',imageen)
         i +=1
