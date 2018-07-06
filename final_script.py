@@ -41,14 +41,11 @@ def load_and_detect_images(im_path, tinyFaces_args):
 
     results = []
 
+    print ('-------Detecting images ... -------')
     for files in tqdm(os.listdir(im_path)):
         if files.endswith('.jpg') or files.endswith('.png'):
-            print ('-------Detecting image:  '+files+' ... -------')
+            print ('-------> Imgage '+ files)
             img = cv2.imread(os.getcwd()+'/'+im_path+files)
-
-            # if not os.path.exists(output_directory):
-            #     print ("** Creating output_directory in "+output_directory+' ... **')
-            #     os.makedirs(output_directory)
 
             [scaled_matrix , bboxes, detected_faces_image] = tinyFaces.tinyFaces_Detection(args,img)
 
@@ -234,10 +231,8 @@ def main():
     results = load_and_detect_images(im_path, tinyFaces_args)
 
     # NOTE: Process images and get predictions or information to write
-    # Replace matrix `data_frame` inside `results[i]` for the processed one
-
-
-
+    # TODO:Replace matrix `data_frame` inside `results[i]` for the processed one
+    # scaled_matrix = preProcess_Image(scaled_matrix)
 
     # NOTE: Write all info in the image
 
@@ -246,11 +241,12 @@ def main():
             'demographics': "" }
 
     i = 0
-    for result in results:
+
+    print('-------- Predicting demographics... --------')
+    for result in tqdm(results):
 
         data_frame = result[0]
         img = result[1]
-        # CHECK SCALED MATRRIX
 
         [demographics, emotions] = predict_demographics_Image(data_frame.imgs)
 
@@ -260,6 +256,7 @@ def main():
         info['text'] = emotions.values[0]
         # info['demographics'] = emotions.values --> TO SEE EMOTIONS WRITTEN IN BOXES
         info['demographics'] = demographics.values
+        
         imageen = write_info_to_img_bboxes(img, data_frame.bboxes.values, info)
         cv2.imwrite(output_directory+'EXAMPLE_'+str(i)+'.jpg',imageen)
         i +=1
