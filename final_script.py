@@ -280,7 +280,7 @@ def main():
         info['text'] = emotions.values[0]
         # info['demographics'] = emotions.values --> TO SEE EMOTIONS WRITTEN IN BOXES
         info['demographics'] = demographics.values
-
+        # info['demographics'] = ["",""]
         imageen = write_info_to_img_bboxes(dataFrame.img[0], dataFrame.bboxes.values, info)
         cv2.imwrite(output_directory+'EXAMPLE_'+str(i)+'.jpg',imageen)
         i +=1
