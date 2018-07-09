@@ -4,15 +4,17 @@ import numpy as np
 import argparse
 import h5py
 from tqdm import tqdm
-from pandas import DataFrame
+from pandas import DataFrame, read_pickle
 from scipy.special import expit
 from face_extractors.util import cm_data
+import pickle
 
 # DETECTORS
 import face_extractors.extract_tinyfaces_faces as tinyFaces
 
 # MODELS
 from age_gender.wide_resnet import WideResNet
+from age_gender.face_network import create_face_network
 from feelings.utils import load_emotion_model
 
 
@@ -34,7 +36,7 @@ def get_args(tinyFaces_args):
     args = parser.parse_args()
     return args
 
-def load_and_detect_images(im_path, tinyFaces_args):
+def load_and_detect_images(im_path, tinyFaces_args, output_directory):
 
     args = get_args(tinyFaces_args)
     scaled_matrix = np.empty([])
@@ -44,37 +46,30 @@ def load_and_detect_images(im_path, tinyFaces_args):
     print ('-------Detecting images ... -------')
     for files in tqdm(os.listdir(im_path)):
         if files.endswith('.jpg') or files.endswith('.png'):
-            print ('-------> Imgage '+ files)
-            img = cv2.imread(os.getcwd()+'/'+im_path+files)
 
-            [scaled_matrix , bboxes, detected_faces_image] = tinyFaces.tinyFaces_Detection(args,img)
+            if os.path.isfile(output_directory+'dataFrame_'+files.split('.')[0]+'.pkl'):
+                print("-------> Loading DataFrame ...")
+                data_frame = read_pickle(output_directory+'dataFrame_'+files.split('.')[0]+'.pkl')
 
-            index = []
-            rows = []
+            else:
+                print ('-------> Imgage '+ files)
+                img = cv2.imread(os.getcwd()+'/'+im_path+files)
 
-            for i in range(len(scaled_matrix)):
-                rows.append({'imgs': scaled_matrix[i] , 'bboxes': bboxes[i]})
-                index.append(i)
+                [scaled_matrix , bboxes, detected_faces_image] = tinyFaces.tinyFaces_Detection(args,img)
 
-            data_frame = DataFrame(rows, index=index)
-            # data_frame.to_pickle(output_directory+'dataFrame_'+files.split('.')[0]+'.pkl')
+                index = []
+                rows = []
 
-            results.append([data_frame, img])
-            # data_frame --> shape (53,2)
+                for i in range(len(scaled_matrix)):
+                    rows.append({'img':img ,'faces': scaled_matrix[i] , 'bboxes': bboxes[i], 'name_img':files.split('.')[0]})
+                    index.append(i)
 
-    # NOTE: RESULTS IS AN ARRAY OF [DATAFRAME, DETECTED_FACES_IMG, IMG]
-    #
-    # In [21]: results[0][0].shape
-    # Out[21]: (53, 2)
-    #        In [31]: results[0][0].imgs[0].shape
-    #        Out[31]: (182, 182, 3)
-    #
-    #        In [33]: results[0][0].bboxes[0].shape
-    #        Out[33]: (5,)
-    #
-    # In [22]: results[0][1].shape
-    # Out[22]: (1080, 1920, 3)
-    #
+                data_frame = DataFrame(rows, index=index)
+                data_frame.to_pickle(output_directory+'dataFrame_'+files.split('.')[0]+'.pkl')
+
+            # results.append([data_frame, img])
+            results.append(data_frame)
+            # data_frame --> shape (53,3)
 
     return results
 
@@ -152,15 +147,23 @@ def preProcess_Image(scaled_matrix):
 
     return scaled_matrix
 
+# def transform_image_etnicity_to_predict(im):
+# 	means = np.load(means_ethnic)
+# 	im = im - means
+# 	return np.array([im])
+
 def predict_demographics_Image(scaled_matrix):
 
+    # NOTE: SETUP PARAMETERS
     # FEELINGS
     class_names = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
     img_size_emotions = 224
-
     # # ETHNICITY
-    # img_size_ethnicity = 224
-
+    # ETHNIC = {0: 'White', 1: 'Black', 2: "Asian", 3: "Indian", 4: "Others"}
+    ETHNIC = {0: 'Asian', 1: 'Caucasian', 2: "African", 3: "Hispanic"}
+    img_size_ethnicity = 224
+    weights_ethnic_file = "pretrained_models/weights_ethnic.hdf5"
+    means_ethnic = 'pretrained_models/means_ethnic.npy'
     # AGE-GENDER
     weight_file_age_gender = "pretrained_models/weights.18-4.06.hdf5"
     img_size_age_gender = 64
@@ -168,30 +171,39 @@ def predict_demographics_Image(scaled_matrix):
     k = 8           # width of network
     max_age = 101   # It can be 117 for the other dataset and weights
 
+    def _transform_image_etnicity_to_predict(im):
+        means = np.load(means_ethnic)
+        im = im - means
+        return np.array([im])
 
     # NOTE: LOAD MODELS AND WEIGHTS
     emotion_model = load_emotion_model('models/model.best.hdf5')
     model_age_gender = WideResNet(img_size_age_gender, depth=depth, k=k, units_age=max_age)()
     model_age_gender.load_weights(weight_file_age_gender)
+    # model_ethnicity = create_face_network(nb_class=4, hidden_dim=512, shape=(img_size_ethnicity, img_size_ethnicity, 3))
+    # model_ethnicity.load_weights(weights_ethnic_file)
+
 
     # NOTE: Resize the images for each model
     faces_e = np.empty((len(scaled_matrix), img_size_emotions, img_size_emotions, 3))
     faces_a_g = np.empty((len(scaled_matrix), img_size_age_gender, img_size_age_gender, 3))
     # faces_eth = np.empty((len(scaled_matrix), img_size_ethnicity, img_size_ethnicity, 3))
-
-
     for i in range(len(scaled_matrix)):
         faces_e[i, :, :, :] = cv2.resize(scaled_matrix[i], (img_size_emotions, img_size_emotions))
         faces_a_g[i, :, :, :] = cv2.resize(scaled_matrix[i], (img_size_age_gender, img_size_age_gender))
         # faces_eth[i, :, :, :] = cv2.resize(scaled_matrix[i], (img_size_ethnicity, img_size_ethnicity))
 
+
     # NOTE: Do the predictions
     pred_emotions = emotion_model.predict(faces_e)
-
     result_age_gend = model_age_gender.predict(faces_a_g)
     predicted_genders = result_age_gend[0]
     ages = np.arange(0, max_age).reshape(max_age, 1)
     predicted_ages = result_age_gend[1].dot(ages).flatten()
+    # result_ethn = np.empty((len(faces_eth),4))
+    # for i in range(len(faces_eth)):
+    #     result_ethn[i] = model_ethnicity.predict(_transform_image_etnicity_to_predict(faces_eth[i]))
+
 
     # NOTE: Build dataframe with info
     rows = []
@@ -201,6 +213,9 @@ def predict_demographics_Image(scaled_matrix):
 
         demographic_pred = "{}, {}".format(int(predicted_ages[i]),
                                   "F" if predicted_genders[i][0]>0.5 else "M")
+        # demographic_pred = "{}, {}, {}".format(int(predicted_ages[i]),
+        #                     "F" if predicted_genders[i][0] > 0.5 else "M",
+        #                      ETHNIC[np.argmax(result_ethn[i])])
 
         class_id = np.argmax(pred_emotions[i])
         emotion = class_names[class_id]
@@ -228,7 +243,7 @@ def main():
 
     # NOTE: Load images and apply face detectors
     # Returns an array of results which contain [data_frame, detected_faces_image, img] for each img
-    results = load_and_detect_images(im_path, tinyFaces_args)
+    results = load_and_detect_images(im_path, tinyFaces_args, output_directory)
 
     # NOTE: Process images and get predictions or information to write
     # TODO:Replace matrix `data_frame` inside `results[i]` for the processed one
@@ -243,21 +258,30 @@ def main():
     i = 0
 
     print('-------- Predicting demographics... --------')
-    for result in tqdm(results):
+    for dataFrame in tqdm(results):
+        # dataFrame --> 'img' ,'faces' 'bboxes'
+        name_file_list = output_directory+'demographics_'+dataFrame.name_img[0]+'.txt'
+        if os.path.isfile(name_file_list):
+            with open(name_file_list, "rb") as fp:   # Unpickling
+                l = pickle.load(fp)
 
-        data_frame = result[0]
-        img = result[1]
+        else:
+            l = predict_demographics_Image(dataFrame.faces)
+            with open(name_file_list, "wb") as fp:   #Pickling
+                pickle.dump(l, fp)
 
-        [demographics, emotions] = predict_demographics_Image(data_frame.imgs)
+        # [demographics, emotions]
+        demographics = l[0]
+        emotions = l[1]
 
-        # data_frame.imgs = scaled_matrix
+        # data_frame.faces = scaled_matrix
 
-        info['counter'] = len(data_frame)
+        info['counter'] = len(dataFrame)
         info['text'] = emotions.values[0]
         # info['demographics'] = emotions.values --> TO SEE EMOTIONS WRITTEN IN BOXES
         info['demographics'] = demographics.values
-        
-        imageen = write_info_to_img_bboxes(img, data_frame.bboxes.values, info)
+
+        imageen = write_info_to_img_bboxes(dataFrame.img[0], dataFrame.bboxes.values, info)
         cv2.imwrite(output_directory+'EXAMPLE_'+str(i)+'.jpg',imageen)
         i +=1
 

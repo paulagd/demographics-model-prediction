@@ -8,6 +8,8 @@ from keras.models import Model
 import keras
 import tensorflow as tf
 import timeit
+from keras.utils.vis_utils import plot_model
+
 
 class CrowdCounting():
 
@@ -32,6 +34,8 @@ class CrowdCounting():
 
         # add corresponding weights for crowd_counting model
         net_crowd = Model(input=input_a, output=[dense5])
+        plot_model(net_crowd, to_file='model_plot_CROWDS.png', show_shapes=True, show_layer_names=True)
+
         net_crowd.load_weights("./models/counting_weights.hdf5")
 
         self.filename = 0
