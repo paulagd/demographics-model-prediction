@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import argparse
 import tensorflow as tf
-import util
+# import util
 import time
 import sys
 import scipy.misc as misc
@@ -11,7 +11,7 @@ from scipy.special import expit
 
 from IPython import embed
 
-import face_extractors.extract_faceNet_faces as faceNet
+# import face_extractors.extract_faceNet_faces as faceNet
 import face_extractors.extract_tinyfaces_faces as tinyFaces
 
 
@@ -30,7 +30,8 @@ modhash = '89f56a39a78454e96379348bddd78c0d'
 # weight_file = "weights.18-4.06.hdf5"
 
 # VIDEO allocation
-video_directory = '/home/paula/THINKSMARTER_/10km_de_course.wmv.mp4'
+# video_directory = '/home/paula/THINKSMARTER_/10km_de_course.wmv.mp4'
+video_directory = '/home/paula/THINKSMARTER_/Model/ExtendedTinyFaces/test.avi'
 # video_directory = '/Users/paulagomezduran/Desktop/10km_de_course.wmv.mp4'
 output_directory = 'results/output_video_frames/'
 
@@ -95,7 +96,8 @@ def main():
     #         int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 
     # NOTE: PYTHON 2.7
-    fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+    # fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+    fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
     size = (int(capture.get(cv2.CAP_PROP_FRAME_WIDTH)),
             int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 
@@ -109,15 +111,18 @@ def main():
     if args.face_detector == 'facenet':
         out1 = cv2.VideoWriter(output_directory+'output_facenet.avi',fourcc, 20.0, size)
     elif args.face_detector == 'tinyfaces':
-        out2 = cv2.VideoWriter(os.path.join(output_directory,'output_tinyfaces.avi'),fourcc, 20.0, size)
+        out2 = cv2.VideoWriter(os.path.join(output_directory,'output_tinyfaces_TEST.avi'),fourcc, 20.0, size)
 
     count = 0
+    maxDetectedFaces = []
+
     try:
         while (capture.isOpened()):
             success,frame = capture.read()
             # print('Read a new frame: ', frame.shape) # --> (720, 1280, 3)
 
             if args.face_detector == 'facenet':
+
                 # out_fn = cv2.VideoWriter('output_facenet.avi',fourcc, 20.0, size)
                 [pnet, rnet, onet] = faceNet.create_FaceNet_network_Params(args)
                 [scaled_matrix , n_faces_detected, detected_faces_image] = faceNet.faceNet_Detection(frame,output_directory, args, pnet, rnet, onet)
@@ -141,17 +146,29 @@ def main():
 
             elif args.face_detector == 'tinyfaces':
                 # out_tf = cv2.VideoWriter('output_tinyfaces.avi',fourcc, 20.0, size)
-                [scaled_matrix , n_faces_detected, detected_faces_image] = tinyFaces.tinyFaces_Detection(args,frame)
-                # TODO: develop a scaled_matrix
+                try:
+                    [scaled_matrix , n_faces_detected, detected_faces_image] = tinyFaces.tinyFaces_Detection(args,frame)
+                    # TODO: develop a scaled_matrix
 
-                # if detected_faces_image.ndim == 1:
-                #     print("------SOMETHING IS WRONG------")
-                # else:
-                out2.write(detected_faces_image)
+
+                    # if detected_faces_image.ndim == 1:
+                    #     print("------SOMETHING IS WRONG------")
+                    # else:
+                    out2.write(detected_faces_image)
+                    maxDetectedFaces.append(len(n_faces_detected))
+                    cv2.imwrite(output_directory+'output_video_tinyFaces/frame_%05d.png' % count, detected_faces_image)
+                    count +=1
+
+                except:
+                    print ("This is an error message in frame " + str(count))
+                    break
             else:
                 print ('A face detector is required as an argument. The options are: facenet or tinyfaces.')
 
 
+        text_file = open("MAX_COUNTER.txt", "w")
+        text_file.write("MAXIM COUNTER: %s" % np.max(maxDetectedFaces))
+        text_file.close()
         print("Total time: ", time.time() - start)
         # Release everything if job is finished
         capture.release()
